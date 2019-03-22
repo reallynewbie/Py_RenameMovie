@@ -1,4 +1,17 @@
+'''
+Script to help Kit Reign rename his video collection into seasons and episodes from the following structure
+Series Name
+    -> 'Series Name - EpisodeNum'.mkv
+
+to the following structure:
+
+Series Name
+    -> Season X
+        -> 'Series Name - SeasonNumEpisodeNum'.mkv (abc - S01E01.mkv)
+'''
+
 import os
+
 
 def main():
     path = input("Enter the path for movie files to rename: ")
@@ -18,6 +31,7 @@ def renameDirectory(newPath, folderName):
             os.mkdir(newPath+"\\Season " + str(1))
         except OSError as e:
             print("Season folder exists")
+
         for listedObj in os.scandir(newPath + '\\'):
             if listedObj.is_file():
                 filename = listedObj.name
@@ -32,24 +46,29 @@ def renameDirectory(newPath, folderName):
                 if episode.isdigit():
                     if extension.lower() == ".mkv":
                         proposedSeason = int(int(episode)/int(seasonNum)) + 1
+
                         if currentSeason != proposedSeason:
-                            currentSeason += 1
+                            currentSeason = proposedSeason
                             try:
-                                os.mkdir(newPath+"\\Season " + str(seasonNum))
+                                os.mkdir(newPath+"\\Season " + str(proposedSeason))
                             except OSError as e:
-                                print("Failed to create folder:  " + newPath + "\\Season " + str(seasonNum))
+                                print("Failed to create folder:  " +
+                                      newPath + "\\Season " + str(proposedSeason))
                                 print(e)
-                                
+
                         if len(seasonNum) < 2:
                             seasonNum = '0' + seasonNum
 
-                        newFName = seriesName + " - S" + str(currentSeason) + "E" + episode + extension
+                        newFName = seriesName + " - S" + \
+                            str(currentSeason) + "E" + episode + extension
                         print("new Fname: " + newFName)
 
                         initPath = newPath + '\\' + fname + extension
-                        finalPath = newPath + '\\' + "Season " + str(currentSeason) + "\\" + newFName
+                        finalPath = newPath + '\\' + "Season " + \
+                            str(currentSeason) + "\\" + newFName
 
                         os.rename(initPath, finalPath)
+    return
 
 
 main()
